@@ -1,0 +1,134 @@
+# Task Description
+You will analyze trajectories for potential errors and provide analysis in a standardized format.
+
+# Analysis Rules
+1. Focus on Error Detection: Analyze each step in the trajectory to identify errors, regardless of the current task status.
+
+2. Analysis Method:
+    - Analyze the given trajectory step by step
+    - Identify where the trajectory first deviated from correct behavior
+
+3. Required Checks:
+    - If the number obtained after three operations is not 24, the calculation process should be changed
+    - If the final result is 24, then it should be displayed as a complete expression using the four numbers in the input, such as "answer: (6 - 4) * (4 + 8) = 24"
+
+4. Output Must Include:
+    - "** Error Location **": Specific step where error occurred
+    - "** Explanation **": Error explanation and correction method
+
+# Example Cases
+## Analysis Example 1
+### Trajectory
+Input: 4 6 13 13
+Act 1> 13 - 6 = 7
+Obs 1> numbers left: 13 4 7
+Act 2> 13 - 7 = 6
+Obs 2> numbers left: 4 6
+Act 3> 4 * 6 = 24
+Obs 3> numbers left: 24
+Act 4> answer: 4 * (13 - (13 - 6)) = 24
+Obs 4> Success!
+
+### Analysis
+Let's analyze it step by step.
+It seems that there is no error in the current trajectory. 
+
+### Conclusion
+** Error Location **: None 
+** Explanation **: There is no error.
+
+## Analysis Example 2
+### Trajectory
+Input: 3 4 10 13
+Act 1> 13 - 10 = 3
+Obs 1> numbers left: 3 3 4
+Act 2> 3 + 3 = 6
+Obs 2> numbers left: 4 6
+Act 3> 4 * 6 = 24
+Obs 3> numbers left: 24
+Act 4> answer: (13 - 10) * (3 + 3) = 24
+Obs 4> The numbers in the math expression do not match the numbers in the problem!
+
+### Analysis
+Let's analyze it step by step.
+Obs 4 shows that Identify got the numbers wrong in the expression.
+According to my previous calculation process, the correct expression in Abs 4 should be ((13 - 10) + 3) * 4 = 24
+
+### Conclusion
+** Error Location **: Act 4
+** Explanation **: I got the numbers wrong in the expression. The correct expression should be ((13 - 10) + 3) * 4 = 24
+
+## Analysis Example 3
+### Trajectory
+Input: 2 6 6 8
+Act 1> 6 - 2 = 4
+Obs 1> numbers left: 4 6 8
+Act 2> 8 - 4 = 4
+Obs 2> numbers left: 4 6
+Act 3> 4 * 6 = 24
+Obs 3> numbers left: 24
+Act 4> 24 = 24
+Obs 4> All available numbers have been consumed. Please provide the final arithmetic expression, which should start with "answer: ", such as: “answer: (6 - 4) * (4 + 8) = 24”
+
+### Analysis
+Let's analyze it step by step.
+Obs 4 shows that I did not output the results in the prescribed format.
+According to the prompt in Obs 4, the output in Abs 4 should be the complete calculation process, that is, "anwser: (8 - (6 - 2)) * 6 = 24" 
+
+### Conclusion
+** Error Location **: Act 4
+** Explanation **: Obs 4 shows that I did not output the results in the prescribed format. According to the prompt in Obs 4, the output in Abs 4 should be the complete calculation process, that is, "anwser: (8 - (6 - 2)) * 6 = 24" 
+
+## Analysis Example 4
+### Trajectory
+Input: 1 1 4 6
+Act 1> 1 + 1 = 2
+Obs 1> numbers left: 2 4 6
+Act 2> 4 * 6 = 24
+Obs 2> numbers left: 2 24
+Act 3> 24 / 2 = 12
+Obs 3> numbers left: 12
+
+### Analysis
+Let's analyze it step by step:
+At Act 3:
+The calculation 24 / 2 = 12 is incorrect as it moves away from our goal of 24
+We should have used the remaining number 2 (which came from 1+1) differently
+At Act 2:
+4 * 6 = 24 is correct
+However, we still need to properly incorporate the 2 (from 1+1) into our final expression
+At Act 1:
+1 + 1 = 2 was not the optimal first step
+Instead, we should have used 1 - 1 to cancel out these numbers, which would give us 0
+Then 0 + (4 * 6) would give us 24
+The optimal solution should have been:
+"answer: (1 - 1) + (4 * 6) = 24"
+
+### Conclusion
+** Error Location **: Act 1
+** Explanation **: The main error was in the initial approach. Instead of adding the 1s together (1 + 1 = 2), we should have subtracted them (1 - 1 = 0) to effectively cancel them out. This would allow us to then add the product of 4 * 6 to get 24. The correct expression should be (1 - 1) + (4 * 6) = 24.
+
+## Analysis Example 5
+### Trajectory
+Input: 1 3 10 10
+Act 1> 10 - 3 = 7
+Obs 1> numbers left: 1 10 7
+Act 2> 10 - 1 = 9
+Obs 2> numbers left: 7 9
+Act 3> 7 + 9 = 16
+Obs 3> numbers left: 16
+
+### Analysis
+Let's analyze it step by step:
+First, let's check the sum of all numbers:
+1 + 3 + 10 + 10 = 24
+Looking at the trajectory:
+Act 1> 10 - 3 = 7
+Act 2> 10 - 1 = 9
+Act 3> 7 + 9 = 16
+The error starts from Act 1. Instead of doing subtraction operations, we should have recognized that these four numbers can be directly added to get 24.
+The trajectory took a complex route with subtractions and additions, leading to 16, which is a dead end since we need 24.
+
+### Conclusion
+** Error Location **: Act 1
+** Explanation **: The error begins with the first step. The chosen operations (subtraction and addition) led to a dead end at 16, with no way to reach 24. When get four numbers, the easiest way is to see if the sum of the four numbers can directly equal 24. Obviously, 1 3 10 10 can directly equal 24. The solution would be: answer: 1 + 3 + 10 + 10 = 24

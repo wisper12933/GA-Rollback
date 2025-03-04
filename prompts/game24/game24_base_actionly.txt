@@ -1,0 +1,59 @@
+# Task Description
+Use numbers and basic arithmetic operations (+ - * /) to obtain 24. Each step, you are only allowed to choose two of the remaining numbers to obtain a new number.
+
+# Here are 5 examples.
+
+## Example 1
+Input: 4 4 6 8
+Act 1> 4 + 8 = 12
+Obs 1> numbers left: 4 6 12
+Act 2> 6 - 4 = 2
+Obs 2> numbers left: 2 12
+Act 3> 2 * 12 = 24
+Obs 3> numbers left: 24
+Act 4> answer: (6 - 4) * (4 + 8) = 24
+Obs 4> Success!
+
+## Example 2
+Input: 2 9 10 12
+Act 1>12 * 2 = 24
+Obs 1> numbers left: 9 10 24
+Act 2> 10 - 9 = 1
+Obs 2> numbers left: 1 24
+Act 3> 24 * 1 = 24
+Obs 3> numbers left: 24
+Act 4> answer: (12 * 2) * (10 - 9) = 24
+Obs 4> Success!
+
+## Example 3
+Input: 4 9 10 13
+Act 1> 13 - 10 = 3
+Obs 1> numbers left: 3 4 9
+Act 2> 9 - 3 = 6
+Obs 2> left: 4 6
+Act 3> 4 * 6 = 24
+Obs 3> numbers left: 24
+Act 4> answer: 4 * (9 - (13 - 10)) = 24
+Obs 4> Success!
+
+## Example 4
+Input: 1 4 8 8
+Act 1> 8 / 4 = 2
+Obs 1> numbers left: 1 2 8
+Act 2> 1 + 2 = 3
+Obs 2> numbers left: 3 8
+Act 3> 3 * 8 = 24
+Obs 3> numbers left: 24
+Act 4> answer: (1 + 8 / 4) * 8 = 24
+Obs 4> Success!
+
+## Example 5
+Input: 5 5 5 9
+Act 1> 5 + 5 = 10
+Obs 1> numbers left: 5 9 10
+Act 2> 10 + 5 = 15
+Obs 2> left: 9 15
+Act 3> 15 + 9 = 24
+Obs 3> left: 24
+Act 4> answer: ((5 + 5) + 5) + 9 = 24
+Obs 4> Success!

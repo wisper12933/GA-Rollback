@@ -1,0 +1,74 @@
+You will be given several examples and failure experiences with corresponding analysis, then complete the task in instruction. You need to analyze whether there are errors in the current trajectory and return the analysis result in the format as shown in the examples. 
+Here are some rules to follow:
+** 1 **. Do not continue based on the current status of the task. You need to analyze whether there is an error in the current trajectory, which step is incorrect, and the reason for the error.
+** 2 **. You can use a back-to-front approach to gradually determine which step went wrong.
+** 3 **. Don’t repeatedly think that the selected product is wrong, and pay more attention to whether all the necessary attributes are clicked before clicking [Buy now].
+** 4 **. The returned content must contain two parts: (1) "** 1 Error Location **": the position where you think the error occurred. (2) "** 2 Explanation **": The cause of the problem and how to fix it.
+
+There are a few examples below.
+
+### Analysis Example 1 ###
+WebShop
+Instruction:
+i need a pink colored area rug for my living room area, and price lower than 200.00 dollars
+[Search]
+Action 1: search[pink colored area rug living room]
+Observation 1:
+[Back to Search]
+Page 1 (Total results: 50)
+[Next >]
+[B089Y9LYWD]
+Soft Round Area Rug for Bedroom, 6 ft Navy Blue Circle Rug for Nursery Room, Fluffy Carpet for Kids Room, Shaggy Floor Mat for Living Room, Furry Area Rug for Baby, Teen Room Decor for Girls Boys
+$41.99
+[B09DSH9KPJ]
+Espiraio Black Shaggy Rugs for Bedroom Living Room, Super Soft Fluffy Fuzzy Area Rug for Kids Baby Nursery, Modern Indoor Plush Carpet for Home Decor, 5x8 Feet Floor Furry Rugs for Children Dorm Rug
+$56.99
+[B08ZYQJ1PW]
+TWINNIS Super Soft Shaggy Rugs Fluffy Carpets, 5x8 Feet, Indoor Modern Plush Area Rugs for Living Room Bedroom Kids Room Nursery Home Decor, Upgrade Anti-Skid Durable Rectangular Fuzzy Rug, Black
+$61.99
+Action 2: click[Next >]
+Observation 2: Invalid action!
+Action 3: search[pink colored area rug living room]
+Observation 3: Invalid action!
+
+Let's analyze it step by step from back to front.
+Observation 3 shows that action 3 is invalid. There is something wrong.
+Action 3 is invalid.
+Observation 2 shows that action 2 is invalid. 
+Action 2 seems to try to go to the next page. However, [B08ZYQJ1PW] seems to meet the requirements, I should check it first instead of clicking [Next >].
+We can conclude that:
+** 1 Error Location **: Action 2, Action 3
+** 2 Explanation **: There's no need to click[Next >] or search. [B08ZYQJ1PW] seems to meet the requirements, I should check it first.
+
+### Analysis Example 2 ###
+WebShop
+Instruction:
+i'm looking for a bakery emulsion which should be free from bpa and gluten. also, choose 1 gallon maple flavored one, and price lower than 40.00 dollars
+[Search]
+Action 1: search[1 gallon maple flavored bakery emulsion BPA free gluten free]
+Observation 1:
+[Back to Search]
+Page 1 (Total results: 50)
+[Next >]
+[B07JP61D9P]
+LorAnn Maple Bakery Emulsion, 4 ounce bottle
+$10.92
+[B006GRKQ0K]
+LorAnn Red Velvet Bakery Emulsion, 4 ounce bottle
+$7.99
+[B00CBM1EYG]
+LorAnn Butter Vanilla Bakery Emulsion, 16 ounce bottle
+$21.53
+Action 2: click[Next >]
+Observation 2: Invalid action!
+Action 3: search[1 gallon maple flavored bakery emulsion BPA free gluten free]
+Observation 3: Invalid action!
+
+Let's analyze it step by step from back to front.
+Observation 3 shows that action 3 is invalid. There is something wrong.
+Action 3 is invalid.
+Observation 2 shows that action 2 is invalid. 
+Action 2 seems to try to go to the next page. However, [B07JP61D9P] appears to meet the requirements, I should check it out instead of clicking [Next >].
+We can conclude that:
+** 1 Error Location **: Action 2, Action 3
+** 2 Explanation **: There's no need to click[Next >] or search. [B07JP61D9P] appears to meet the requirements, I should check it out.

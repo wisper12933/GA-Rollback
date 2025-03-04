@@ -1,0 +1,93 @@
+# Task Description
+You will analyze trajectories for potential errors and provide analysis in a standardized format.
+
+# Analysis Rules
+1. Focus on Error Detection: Analyze each step in the trajectory to identify errors, regardless of the current task status.
+
+2. Analysis Method:
+    - Start from the final outcome
+    - Work backwards through each action
+    - Identify where the trajectory first deviated from correct behavior
+
+3. Required Checks:
+    - Verify that you have reached the correct location before picking up objects
+    - Confirm destination exists in the environment before navigation
+
+4. Output Must Include:
+    - "** Error Location **": Specific step where error occurred
+    - "** Explanation **": Error explanation and correction method
+
+# Example Cases
+## Analysis Example 1
+### Trajectory
+You are in the middle of a room. Looking quickly around you, you see a cabinet 4, a cabinet 3, a cabinet 2, a cabinet 1, a countertop 1, a garbagecan 1, a handtowelholder 2, a handtowelholder 1, a sinkbasin 2, a sinkbasin 1, a toilet 1, a toiletpaperhanger 1, and a towelholder 1.
+Your task is to: clean some soapbar and put it in countertop.
+Act 1: go to cabinet 1
+Obs 1: The cabinet 1 is closed.
+Act 2: open cabinet 1
+Obs 2: You open the cabinet 1. The cabinet 1 is open. In it, you see a cloth 1.
+Act 3: go to cabinet 2
+Obs 3: The cabinet 2 is closed.
+Act 4: open cabinet 2
+Obs 4: You open the cabinet 2. The cabinet 2 is open. In it, you see nothing.
+Act 5: go to cabinet 3
+Obs 5: The cabinet 3 is closed.
+Act 6: open cabinet 3
+Obs 6: You open the cabinet 3. The cabinet 3 is open. In it, you see a candle 1, and a toiletpaper 3.
+Act 7: go to cabinet 4
+Obs 7: The cabinet 4 is closed.
+Act 8: open cabinet 4
+Obs 8: You open the cabinet 4. The cabinet 4 is open. In it, you see a soapbottle 1, and a toiletpaper 2.
+Act 9: go to sinkbasin 1
+Obs 9: On the sinkbasin 1, you see nothing.
+Act 10: go to sinkbasin 1
+Obs 10: Nothing happens.
+
+### Analysis
+Let's analyze it step by step from back to front.
+Obs 10 shows that Act 10 is invalid.
+Act 10 repeats the action of Act 9, and it is incorrect. I should go to sinkbasin 2 and other places to find a soapbar.
+
+### Conclusion
+** 1 Error Location **: Act 10
+** 2 Explanation **: I already went to sinkbasin 1, there is nothing. I should go to sinkbasin 2 and other places.
+
+## Analysis Example 2
+### Trajectory
+You are in the middle of a room. Looking quickly around you, you see a bed 1, a desk 2, a desk 1, a drawer 6, a drawer 5, a drawer 4, a drawer 3, a drawer 2, a drawer 1, a garbagecan 1, a laundryhamper 1, a safe 1, a shelf 6, a shelf 5, a shelf 4, a shelf 3, a shelf 2, and a shelf 1.
+Your task is to: examine the cd with the desklamp.
+Act 1: go to shelf 1
+Obs 1: On the shelf 1, you see a mug 1.
+Act 2: go to shelf 2
+Obs 2: On the shelf 2, you see nothing.
+Act 3: go to shelf 3
+Obs 3: On the shelf 3, you see a desklamp 1.
+Act 4: use desklamp 1
+Obs 4: You turn on the desklamp 1.
+Act 5: go to shelf 4
+Obs 5: On the shelf 4, you see a alarmclock 1, and a pencil 2.
+Act 6: go to shelf 5
+Obs 6: On the shelf 5, you see a creditcard 3.
+Act 7: go to shelf 6
+Obs 7: On the shelf 6, you see nothing.
+Act 8: go to desk 1
+Obs 8: On the desk 1, you see a cd 2, a creditcard 2, and a desklamp 1.
+Act 9: use desklamp 1
+Obs 9: You turn on the desklamp 1.
+Act 10: look at cd 2 with desklamp 1
+Obs 10: Nothing happens.
+Act 11: look at cd 2 with desklamp 1
+Obs 11: Nothing happens.
+
+### Analysis
+Let's analyze it step by step from back to front.
+Obs 11 shows that Act 11 is invalid.
+Act 11 repeats the action of Act 10, and it is incorrect.
+Obs 10 shows that Act 10 is invalid.
+Act 10 is incorrect, because I didn't have a cd 2 with me. I should first take cd 2 from desk 1.
+Obs 9 shows that I turned on the desklamp 1.
+I missed a step at Act 9. I should take cd 2 from desk 1 at Act 9.
+
+### Conclusion
+** 1 Error Location **: Act 9, Act 10, Act 11
+** 2 Explanation **: I missed some necessary steps. I should first take cd 2 from desk 1 at Act 9, and then use desklamp 1.

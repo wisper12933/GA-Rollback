@@ -1,0 +1,226 @@
+# Task Description
+You will analyze trajectories for potential errors and provide analysis in a standardized format.
+
+# Analysis Rules
+1. Focus on Error Detection: Analyze each step in the trajectory to identify errors, regardless of the current task status.
+
+2. Analysis Method:
+    - Start from the final outcome
+    - Work backwards through each action
+    - Identify where the trajectory first deviated from correct behavior
+
+3. Required Checks:
+    - Verify all required product attributes are selected
+    - Confirm specifications match the user's requirements
+    - Ensure necessary clicks/selections are made before purchase
+
+4. Output Must Include:
+    - "** Error Location **": Specific step where error occurred
+    - "** Explanation **": Error explanation and correction method
+
+# Example Cases
+## Analysis Example 1 
+### Trajectory
+WebShop 
+Instruction:  
+i'm looking for a queen size bedspread set in the color redwood, and price lower than 60.00 dollars 
+[Search] 
+Action 1: search[queen size bedspread set redwood]
+Observation 1: 
+[Back to Search] 
+Page 1 (Total results: 50) 
+[Next >] 
+[B07B4KXQZV] 
+Lodge Bedspread Full/Queen Size Quilt with 2 Shams. Cabin 3-Piece Reversible All Season Quilt Set. Rustic Quilt Coverlet Bed Set. Stonehurst Collection. 
+$44.99 
+[B07PGQ3JYB] 
+Lodge Bedspread Full/Queen Size Quilt with 2 Shams. Cabin 3-Piece Reversible All Season Quilt Set. Rustic Quilt Coverlet Bed Set. Wilderness Collection (Moose - Grey) 
+$44.99 
+[B07WZBXSK3] 
+Travan 3-Piece Queen Quilt Set Quilted Bedspread Oversized Microfiber Lightweight Bedspread Coverlet Set with Shams Bedding Set for All Season, Grey, Queen 
+$64.99 
+
+### Analysis
+Let's analyze it step by step from back to front.
+It seems that there is no error in the current trajectory. 
+
+### Conclusion
+** Error Location **: None 
+** Explanation **: There is no error.
+
+## Analysis Example 2 
+### Trajectory
+WebShop 
+Instruction:  
+i'm looking for a styling cream that is cruelty free and for short hair, and price lower than 40.00 dollars 
+[Search] 
+Action 1: search[cruelty free styling cream short hair]
+Observation 1: 
+[Back to Search] 
+Page 1 (Total results: 50) 
+[Next >] 
+[B008HRRWHM] 
+Argan Magic Nourishing Hair Cream - Hydrates, Conditions, and Eliminates Frizz for All Hair Types | Seals in Shine | Made in USA, Paraben Free, Cruelty Free (8.5 oz) 
+$12.95 
+[B08PQ33DJW] 
+DIRT Silky Cream - Vegan Hair Styling Cream - Multi-Use Treatment - 4 oz - Thermal Protection, Conditioning, Volume, Anti-Frizz, Safe for Color Treated Hair- Unisex Product for Men and Women 
+$16.0 
+[B01ERIIWWS] 
+Maria Nila Styling Cream 100 ml - Leaves Hair With A Salt Water Feeling. 100% Vegan. Sulfate-free and Paraben-free. 
+$30.95 
+Action 2: click[B008HRRWHM]
+Observation 2: 
+[Back to Search] 
+[< Prev] 
+size [2 pack][8.5 ounce (pack of 1)]
+Argan Magic Nourishing Hair Cream - Hydrates, Conditions, and Eliminates Frizz for All Hair Types | Seals in Shine | Made in USA, Paraben Free, Cruelty Free (8.5 oz) 
+Price: $12.95 
+Rating: N.A. 
+[Description] 
+[Features] 
+[Reviews] 
+[Attributes] 
+[Buy Now] 
+
+### Analysis
+Let's analyze it step by step from back to front.
+It seems that there is no error in the current trajectory. 
+
+### Conclusion
+** Error Location **: None 
+** Explanation **: There is no error.
+
+## Analysis Example 3 
+### Trajectory
+WebShop 
+Instruction:  
+i'm looking for a high performance paint contrast projector, and price lower than 230.00 dollars 
+[Search] 
+Action 1: search[high performance paint contrast projector]
+Observation 1: 
+[Back to Search] 
+Page 1 (Total results: 50) 
+[Next >] 
+[B07JX7QM8G] 
+Smarter Surfaces Projector Paint Pro 65ft²/25.40floz + Smart White Primer 65ft² - Projectable Wall - Projector Screen White - High-Definition Projection - Gain V.alue 1.1 Viewing Angle 140° 
+$211.0 
+[B08X6MNWBN] 
+Smart Projector Paint 65ft²/25floz - 4K Projectable Wall Paint - Projector Screen Paint White - Make a Projection Screen On A Wall - Gain Value 1.0 Viewing Angle 140° - Free Express Shipment 
+$149.0 
+[B0922YTVF2] 
+HD Mini Projector, Professional 1080P LCD Portable Household Projector Smart Multimedia Home Theater Movie Projector for Outdoor/Indoor Supported 1000:1/16:9/AV/HDMI/VGA/Memory Card/USB/TV/DC 
+$72.49 
+Action 2: click[B07JX7QM8G]
+Observation 2: 
+[Back to Search] 
+[< Prev] 
+model [projection paint][projection paint contrast][projection paint pro]
+Smarter Surfaces Projector Paint Pro 65ft²/25.40floz + Smart White Primer 65ft² - Projectable Wall - Projector Screen White - High-Definition Projection - Gain V.alue 1.1 Viewing Angle 140° 
+Price: $211.0 
+Rating: N.A. 
+[Description] 
+[Features] 
+[Reviews] 
+[Attributes] 
+[Buy Now] 
+Action 3: click[Buy Now]
+Observation 3: Your score (min 0.0, max 1.0): 0.6666666666666666
+
+### Analysis
+Let's analyze it step by step from back to front.
+Observation 3 shows that the current trajectory did not get full marks. We probably missed some operations. 
+Action 3 directly clicked [Buy now], but the user requirement mentioned the need for a paint contrast projector. Obviously, we forgot to click [projection paint contrast]. 
+
+### Conclusion
+** Error Location **: Action 3
+** Explanation **: The user needs a paint contrast projector. We should click [projection paint contrast] at Action 3.
+
+## Analysis Example 4 
+### Trajectory
+WebShop 
+Instruction:  
+locate the ambesonne harbour stripe throw pillow cover, 18 x 18 inch, double sided.  i want the salmon brown color, and price lower than 50.00 dollars 
+[Search] 
+Action 1: search[ambesonne harbour stripe throw pillow cover 18x18 inch double sided salmon brown]
+Observation 1: 
+[Back to Search] 
+Page 1 (Total results: 50) 
+[Next >] 
+[B07RXS9VQZ] 
+STARSCITY Decorative Square Throw Pillow Covers Set 100% Cotton Flower Cushion Case Covers Double-Sides Embroidered Home Decor Handmade Pillow Shams (Yellow, 18x18 inches) 
+$22.99 
+[B071ZZB5QC] 
+Ambesonne Graffiti Throw Pillow Cushion Cover, Modern and Grunge Wall with a Girl and Words Casual Youth Urban Fashion Print, Decorative Square Accent Pillow Case, 24" X 24", Yellow Grey 
+$26.99 
+[B09FQ7HT1X] 
+FAB NATURA 18x18 Throw Pillows- Decorative Pillows Set of 2 -Soft Square Cushion Case Home Decor for Couch, Bed, Sofa, Bedroom, Car, Brown, 18X18 Rust 18 x 18-Inch CUS Kilim 01 
+$38.58 
+Action 2: click[B07RXS9VQZ]
+Observation 2: 
+[Back to Search] 
+[< Prev] 
+color [yellow][blue-green-2pcs][brown-2pcs][gray-2pcs][grey-green]
+size [18x18 inches][20x20 inches]
+STARSCITY Decorative Square Throw Pillow Covers Set 100% Cotton Flower Cushion Case Covers Double-Sides Embroidered Home Decor Handmade Pillow Shams (Yellow, 18x18 inches) 
+Price: $22.99 
+Rating: N.A. 
+[Description] 
+[Features] 
+[Reviews] 
+[Attributes] 
+[Buy Now] 
+
+### Analysis
+Let's analyze it step by step from back to front.
+Observation 3 shows that the current item is a STARSCITY decorative square throw pillow. But, the user wants a ambesonne harbour stripe throw pillow.
+Action 3 clicked [B07RXS9VQZ], but [B071ZZB5QC] is more in line with the requirement. 
+
+### Conclusion
+** Error Location **: Action 2
+** Explanation **: [B07RXS9VQZ] is not a ambesonne harbour stripe throw pillow. [B071ZZB5QC] is more in line with the requirement. We should click [B071ZZB5QC] at Action 2.
+
+## Analysis Example 5 
+### Trajectory
+WebShop 
+Instruction:  
+i want machine washable dream catcher light proof curtains that is 55" w x 45" l, and price lower than 70.00 dollars 
+[Search] 
+Action 1: search[machine washable dream catcher light proof curtains 55x45]
+Observation 1: 
+[Back to Search] 
+Page 1 (Total results: 50) 
+[Next >] 
+[B0999GMFBW] 
+Aoopistc Boho Dream Catcher Window Treatments Purple Blackout Curtains 2 Panels Set Darkening Window Coverings Shower Curtains 
+$51.99 
+[B07MZS2GBB] 
+Coutious 100% Blackout Window Curtain with Silver Grommet for Adults/Teens Dream Feather Catcher Darkening Drapes Window Covering Set for Home Theatre/Living Room/Bedroom 2 Panels 52"x96" 
+$163.0 
+[B08NY6PDYY] 
+CLOHOMIN Comfortable Mens Plush Bathrobe with Pocket, Soft Spa Robes Keep Warm Bathrobes for Winter Spring 
+$49.99 
+Action 2: click[B0999GMFBW]
+Observation 2: 
+[Back to Search] 
+[< Prev] 
+color [african tribal][aztec tribal horse][aztec tribal turquoise][black white cow][black white zebra][blue butterfly galaxy][blue rose][boho dream catcher][eyelash pink eyeshadow][fruit lemon][funny frog][galaxy purple butterfly][green frog with colorful paws][hummingbird floral][purple butterfly][red rose][red rose flower][sexy leopard][sexy red lips][tribal turtle hibiscus][tropical monstera][western navajo aztec][yellow sunflower butterfly]
+size [small-52''x63''][large-52''x84'']
+Aoopistc Boho Dream Catcher Window Treatments Purple Blackout Curtains 2 Panels Set Darkening Window Coverings Shower Curtains 
+Price: $51.99 
+Rating: N.A. 
+[Description] 
+[Features] 
+[Reviews] 
+[Attributes] 
+[Buy Now] 
+
+### Analysis
+Let's analyze it step by step from back to front.
+Observation 2 shows that the current item does not have a 55" w x 45" l option, which means it is not the product we are looking for.
+Action 2 clicked [B0999GMFBW]. We should check Observation 1 for more information.
+Observation 1 shows 3 items. But [B0999GMFBW] has been ruled out, [B07MZS2GBB] is out of the $70 budget, [B08NY6PDYY] is not a dream catcher light proof curtain. We should modify the search query.
+Action 1 searched [machine washable dream catcher light proof curtains 55x45]. 55x45 is not correct. We should search [machine washable dream catcher light proof curtains 55" w x 45" l].
+
+### Conclusion
+** Error Location **: Action 1
+** Explanation **: The query [machine washable dream catcher light proof curtains 55x45] is not correct. We should search [machine washable dream catcher light proof curtains 55" w x 45" l] at Action 1.

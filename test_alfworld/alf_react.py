@@ -20,7 +20,7 @@ def extract_substring(s: str) -> str:
 
 
 def llm(prompt, stop=["\n"]):
-    client = OpenAI(api_key="sk-f040a80d7b9b45c99f5a69a0d1a2a35e", base_url="https://api.deepseek.com")
+    client = OpenAI(api_key="", base_url="https://api.deepseek.com")
     response = client.chat.completions.create(
         model="deepseek-reasoner",
         messages=[

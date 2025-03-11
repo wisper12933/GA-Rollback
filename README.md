@@ -2,7 +2,7 @@
 
 ![image not found](images/methodology.jpg)
 
-Code for paper [Generator-Assistant Stepwise Rollback Framework for Large Language Model Agent](https://github.com/wisper12933/LMRC)
+Code for paper [Generator-Assistant Stepwise Rollback Framework for Large Language Model Agent](https://arxiv.org/abs/2503.02519)
 
 ## ⚙️ Setup
 

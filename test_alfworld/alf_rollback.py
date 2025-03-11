@@ -52,30 +52,6 @@ class Local_llm:
             trust_remote_code=True,
             device_map="auto"
         )
-        # self.device = torch.device(f'cuda:{device_id}' if torch.cuda.is_available() else 'cpu')
-        # print(f'Using device: {self.device}')
-        
-        # self.tokenizer = AutoTokenizer.from_pretrained(local_path, trust_remote_code=True)
-        # self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
-        
-        # self.model = AutoModelForCausalLM.from_pretrained(
-        #     local_path,
-        #     torch_dtype=torch.float16,
-        #     trust_remote_code=True
-        # ).to(self.device)
-        
-        # self.model.half()
-        # self.model.eval()
-        # if torch.__version__ >= "2" and sys.platform != "win32":
-        #     self.model = torch.compile(self.model)
-        
-        # self.generation_pipe = pipeline(
-        #     "text-generation",
-        #     model=self.model,
-        #     tokenizer=self.tokenizer,
-        #     trust_remote_code=True,
-        #     device=self.device.index
-        # )
     
     def _generate(self, prompt: str, stop=None, max_new_tokens=100, gen_logits=False):  
         response = {
@@ -296,7 +272,7 @@ def gen_thought_parse(env_history, llm, exp: List, error_type=''):
 
     max_attempts = 2
     for _ in range(max_attempts):
-        response = llm._generate(analyze_query, max_new_tokens=800, gen_logits=True)
+        response = llm._generate(analyze_query, max_new_tokens=1200, gen_logits=True)
         analysis = response['text'].lstrip(' ')
         # print('**************Analysis Query**************\n' + analyze_query)
         # print('******************************************')
@@ -459,7 +435,7 @@ prefixes = {
 }
 
 
-def run_tasks(llm, assist_llm=None, is_assist=False, max_rollback_num=6, wait_k=6):
+def run_tasks(llm, assist_llm=None, is_assist=False, max_rollback_num=6, wait_k=6, mode='act'):
     cnts = [0] * 6
     rs = [0] * 6
     roll_logs = []
@@ -482,7 +458,7 @@ def run_tasks(llm, assist_llm=None, is_assist=False, max_rollback_num=6, wait_k=
         for i, (k, v) in enumerate(prefixes.items()):
             if name.startswith(k):
                 # mode react/act
-                prompt = 'Interact with a household to solve a task. Here are two examples.\n' + d[f'act_{v}_1'] + d[f'act_{v}_0']
+                prompt = 'Interact with a household to solve a task. Here are two examples.\n' + d[f'{mode}_{v}_1'] + d[f'{mode}_{v}_0']
                 print(k, v)
                 
                 r, rollback_record = alfworld_run(env, prompt, llm, assist_llm, is_assist, ob=ob, max_rollback_num=max_rollback_num, wait_k=wait_k)
@@ -511,6 +487,7 @@ if __name__ == '__main__':
     parser.add_argument("--assist_name_or_path", type=str, default='None', help="Name or path of the LLM used as Assitant")
     parser.add_argument("--out_record_path", type=str, help="the file path for saving rollback records")
     parser.add_argument("--wait_k", type=int, help="the file path for saving rollback records")
+    parser.add_argument("--mode", type=str, default='act', help="act / ract", choices=["act", "react"])
     args = parser.parse_args()
     
     if args.model_source == 'open':
@@ -523,7 +500,7 @@ if __name__ == '__main__':
             assist_llm = Local_llm(args.assist_name_or_path)
         else:
             assist_llm = Api_llm(args.assist_name_or_path)
-        roll_logs = run_tasks(llm, assist_llm, True, args.max_roll_num, wait_k=args.wait_k)
+        roll_logs = run_tasks(llm, assist_llm, True, args.max_roll_num, wait_k=args.wait_k, mode=args.mode)
     else:
-        roll_logs = run_tasks(llm, max_rollback_num=args.max_roll_num, wait_k=args.wait_k)
+        roll_logs = run_tasks(llm, max_rollback_num=args.max_roll_num, wait_k=args.wait_k, mode=args.mode)
     json.dump(roll_logs, open(args.out_record_path, 'w'), indent=4)

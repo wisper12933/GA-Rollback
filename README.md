@@ -109,6 +109,7 @@ python alf_rollback.py \
 _Launch the website first._
 
 ```shell
+cd ./test_webshop
 python web_rollback.py \
         --port your_port \      # port
         --model_source 'open' \ # open / close (open sourced/api-based llms)

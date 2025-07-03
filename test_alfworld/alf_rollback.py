@@ -121,7 +121,7 @@ class Api_llm:
         stops = []
         if stop:
             stops.append(stop)
-        client = OpenAI(api_key="", base_url="https://api.deepseek.com")
+        client = OpenAI(api_key="", base_url="")
         response = client.chat.completions.create(
             model=self.model_name,
             messages=[
@@ -136,16 +136,7 @@ class Api_llm:
             frequency_penalty=0.0,
             presence_penalty=0.0,
         )
-        # response = openai.Completion.create(
-        #   model="text-davinci-002",
-        #   prompt=prompt,
-        #   temperature=0,
-        #   max_tokens=100,
-        #   top_p=1,
-        #   frequency_penalty=0.0,
-        #   presence_penalty=0.0,
-        #   stop=stop
-        # )
+
         action = response.choices[0].message.content
         action = extract_substring(generate_text)
         if len(action) > 1:
@@ -168,11 +159,6 @@ def get_base_query(base_query: str, start_info: str, exp: List[str]) -> str:
 
 def generate_analysis_query(scenario: str, exp: List[str], few_shot_examples: str) -> str:
     query: str = f"""{few_shot_examples}"""
-
-    # if len(exp) > 0:
-    #     query += '\n\nAnalysis from past attempts:\n'
-    #     for i, m in enumerate(exp):
-    #         query += f'Trial #{i}: {m}\n'
 
     query += f"\n# Current Task\n### Trajectory{scenario}\n##Your analysis of the current trajectory\n"
     return query
@@ -274,8 +260,6 @@ def gen_thought_parse(env_history, llm, exp: List, error_type=''):
     for _ in range(max_attempts):
         response = llm._generate(analyze_query, max_new_tokens=1200, gen_logits=True)
         analysis = response['text'].lstrip(' ')
-        # print('**************Analysis Query**************\n' + analyze_query)
-        # print('******************************************')
         print('**************Analysis**************\n' + analysis)
         print('************************************')
         sys.stdout.flush()
@@ -306,9 +290,6 @@ def gen_thought_parse(env_history, llm, exp: List, error_type=''):
                     sents = sents[:-1]
                 e_anal = '.'.join(sents) + '.'
                 
-                # experience = env_history.gen_query([], True)
-                # experience = experience + 'Analysis:' + e_anal
-                
                 return earliest_e_loc, e_anal  # loc, analysis
 
         print(f'Attempt {_ + 1}: Failed to generate correct format.')
@@ -331,9 +312,7 @@ def rollback(env, env_history, llm, e_loc: int, exp: List):
         _ = env.step([action])
 
     new_query = env_history.gen_query(exp) + f'Act {env_history.history_len + 1}>'
-    # print('\n**************New Query**************\n' + new_query)
-    # print('*************************************\n\n')
-    # sys.stdout.flush()
+
     response = llm._generate(new_query, stop='\n')
     new_action = response['text'].lstrip(' ')
     new_action = format_text(new_action)

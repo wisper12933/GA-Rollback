@@ -51,8 +51,6 @@ class Local_llm:
             top_p=1,
             do_sample=True
         )
-        # print('########################\n' + prompt + '\n########################')
-        # sys.stdout.flush()
         action = sequences[0]["generated_text"]
         if stop:
             action = action.split(stop)[0]

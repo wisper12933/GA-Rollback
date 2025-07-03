@@ -99,8 +99,6 @@ class Local_llm:
             logsumexp_prob = torch.logsumexp(selected_probs, dim=0).item()
             response['average_prob'] = average_prob
             response['logsumexp_prob'] = logsumexp_prob
-            # print(average_prob)
-            # sys.stdout.flush()
             
             if stop:
                 generate_text = [text for text in generate_text.split(stop) if text][0]
@@ -114,8 +112,8 @@ class Local_llm:
                 pad_token_id=self.tokenizer.pad_token_id,
                 eos_token_id=self.tokenizer.eos_token_id,
                 return_full_text=False,
-                # top_p=1,
-                # do_sample=True
+                top_p=1,
+                do_sample=True
             )
             generate_text = sequences[0]["generated_text"]
             if stop:
@@ -202,17 +200,6 @@ class IntraHistory:
         return s
 
 
-def extract_substring(s: str) -> str:
-    start_pos = s.find(':')
-    if start_pos > 4:
-        start_pos = -1
-    end_pos = s.find(']', start_pos)
-    if end_pos != -1:
-        return s[start_pos + 1: end_pos + 1].strip()
-    else:
-        return s[start_pos + 1:].strip()
-
-
 def _get_scenario(s: str) -> str:
     """Parses the relevant scenario from the experience log."""
     return s.split("Instruction:")[-1].strip()
@@ -239,11 +226,6 @@ Instruction: {scenario}"""
 
 def generate_analysis_query(scenario: str, exp: List[str], few_shot_examples: str) -> str:
     query: str = f"""{few_shot_examples}"""
-
-    # if len(exp) > 0:
-    #     query += '\n\nAnalysis from past attempts:\n'
-    #     for i, m in enumerate(exp):
-    #         query += f'Trial #{i}: {m}\n'
 
     query += f"\n# Current Task\n### Trajectory{scenario}\n##Your analysis of the current trajectory\n"
     return query
@@ -313,18 +295,18 @@ def split_analysis(text):
     lines = text.split('\n')
     content = []
     for line in lines:
-        if line.startswith('** Error Location'):
+        if 'Error Location **' in line:
             loc = line[2:].strip()
             content.append(loc)
             break
 
     for line in lines:
-        if line.startswith('** Explanation'):
+        if 'Explanation **' in line:
             anal = line[2:].strip()
             content.append(anal)
             break
     
-    return content 
+    return content
 
 
 def clean_str(p):
@@ -349,8 +331,6 @@ def gen_thought_parse(env_history, llm, exp: List, error_type=''):
     for _ in range(max_attempts):
         response = llm._generate(analyze_query, max_new_tokens=250, gen_logits=True)
         analysis = response['text'].lstrip(' ')
-        # print('***********Analysis Query***********\n' + analyze_query)
-        # print('************************************\n')
         print('**************Analysis**************\n' + analysis)
         print('************************************\n')
         sys.stdout.flush()
@@ -380,11 +360,8 @@ def gen_thought_parse(env_history, llm, exp: List, error_type=''):
                 if sents[-1].strip():
                     sents = sents[:-1]
                 e_anal = '.'.join(sents) + '.'
-                # Changed, delete experience to back to last version
-                # experience = env_history.gen_query([], True)
-                # experience = experience + 'Analysis:' + e_anal
                 
-                return earliest_e_loc, e_anal  # loc, analysis
+                return earliest_e_loc, e_anal
 
         print(f'Attempt {_ + 1}: Failed to generate correct format.')
         sys.stdout.flush()
@@ -407,9 +384,7 @@ def rollback(idx: str, env, env_history, llm, e_loc: int, exp: List):
         _ = env.step(idx, action)
 
     new_query = env_history.gen_query(exp) + f'Action {env_history.history_len + 1}:'
-    # print('\n**************New Query**************\n' + new_query)
-    # print('*************************************\n\n')
-    # sys.stdout.flush()
+
     response = llm._generate(new_query[-(6400 - len(env_history.base_query)):], stop='\n')
     new_action = response['text'].lstrip(' ')
     new_action = format_text(new_action)

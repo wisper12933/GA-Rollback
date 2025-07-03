@@ -41,18 +41,15 @@ prob_threshold = 0.93
 
 
 class Local_llm:
-    def __init__(self, local_path, device_id):
-        self.device = torch.device(f'cuda:{device_id}' if torch.cuda.is_available() else 'cpu')
-        print(f'Using device: {self.device}')
-        
+    def __init__(self, local_path):
         self.tokenizer = AutoTokenizer.from_pretrained(local_path, trust_remote_code=True)
         self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
-        
         self.model = AutoModelForCausalLM.from_pretrained(
             local_path,
             torch_dtype=torch.float16,
-            trust_remote_code=True
-        ).to(self.device)
+            trust_remote_code=True,
+            device_map="auto"
+        )
         
         self.model.half()
         self.model.eval()
@@ -64,7 +61,7 @@ class Local_llm:
             model=self.model,
             tokenizer=self.tokenizer,
             trust_remote_code=True,
-            device=self.device.index
+            device_map="auto"
         )
     
     def _generate(self, prompt: str, stop=None, max_new_tokens=100, gen_logits=False):  
@@ -74,7 +71,13 @@ class Local_llm:
             'logsumexp_prob': None
         }
         if gen_logits:
-            inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
+            inputs = self.tokenizer(prompt, return_tensors="pt")
+            if hasattr(self.model, 'device_map'):
+                first_device = next(iter(self.model.device_map.values()))
+                inputs = inputs.to(f'cuda:{first_device}' if isinstance(first_device, int) else first_device)
+            else:
+                inputs = inputs.to(self.model.device)
+                
             outputs = self.model.generate(
                 **inputs,
                 temperature=0.1,
@@ -98,10 +101,6 @@ class Local_llm:
             logsumexp_prob = torch.logsumexp(selected_probs, dim=0).item()
             response['average_prob'] = average_prob
             response['logsumexp_prob'] = logsumexp_prob
-            # prob_list.append(average_prob)
-            # logsum_list.append(logsumexp_prob)
-            # print(average_prob)
-            # sys.stdout.flush()
             
             if stop:
                 generate_text = [text for text in generate_text.split(stop) if text][0]
@@ -291,11 +290,6 @@ def get_base_query(base_query: str, start_info: str, exp: List[str], memory: Lis
 def generate_analysis_query(scenario: str, exp: List[str], few_shot_examples: str) -> str:
     query: str = f"""{few_shot_examples}"""
 
-    # if len(exp) > 0:
-    #     query += '\n\nAnalysis from past attempts:\n'
-    #     for i, m in enumerate(exp):
-    #         query += f'Trial #{i}: {m}\n'
-
     query += f"\n# Current Task\n### Trajectory{scenario}\n##Your analysis of the current trajectory\n"
     return query
 
@@ -340,8 +334,6 @@ def gen_thought_parse(env_history, llm, exp: List, error_type=''):
     for _ in range(max_attempts):
         response = llm._generate(analyze_query, max_new_tokens=600, gen_logits=True)
         analysis = response['text'].lstrip(' ')
-        # print('**************Analysis Query**************\n' + analyze_query)
-        # print('******************************************')
         print('**************Analysis**************\n' + analysis)
         print('************************************')
         sys.stdout.flush()
@@ -372,9 +364,6 @@ def gen_thought_parse(env_history, llm, exp: List, error_type=''):
                     sents = sents[:-1]
                 e_anal = '.'.join(sents) + '.'
                 
-                # experience = env_history.gen_query([], True)
-                # experience = experience + 'Analysis:' + e_anal
-                
                 return earliest_e_loc, e_anal  # loc, analysis
 
         print(f'Attempt {_ + 1}: Failed to generate correct format.')
@@ -398,9 +387,7 @@ def rollback(env, env_history, llm, e_loc: int, exp: List):
         _ = env.step([action])
 
     new_query = env_history.gen_query(exp) + f'Act {env_history.history_len + 1}>'
-    # print('\n**************New Query**************\n' + new_query)
-    # print('*************************************\n\n')
-    # sys.stdout.flush()
+
     response = llm._generate(new_query, stop='\n')
     new_action = response['text'].lstrip(' ')
     new_action = format_text(new_action)

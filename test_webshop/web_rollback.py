@@ -23,6 +23,7 @@ from transformers import (
 
 WEBSHOP_LOACTION = "http://127.0.0.1:"
 
+# change actionly to react to run GA-rollback+ReAct
 with open("../prompts/webshop/webshop_ssr_actionly_prompt.txt", 'r') as f:
     BASE_PROMPT = f.read()
 
@@ -60,30 +61,6 @@ class Local_llm:
             trust_remote_code=True,
             device_map="auto"
         )
-        # self.device = torch.device(f'cuda:{device_id}' if torch.cuda.is_available() else 'cpu')
-        # print(f'Using device: {self.device}')
-        
-        # self.tokenizer = AutoTokenizer.from_pretrained(local_path, trust_remote_code=True)
-        # self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
-        
-        # self.model = AutoModelForCausalLM.from_pretrained(
-        #     local_path,
-        #     torch_dtype=torch.float16,
-        #     trust_remote_code=True
-        # ).to(self.device)
-        
-        # self.model.half()
-        # self.model.eval()
-        # if torch.__version__ >= "2" and sys.platform != "win32":
-        #     self.model = torch.compile(self.model)
-        
-        # self.generation_pipe = pipeline(
-        #     "text-generation",
-        #     model=self.model,
-        #     tokenizer=self.tokenizer,
-        #     trust_remote_code=True,
-        #     device=self.device.index
-        # )
     
     def _generate(self, prompt: str, stop=None, max_new_tokens=100, gen_logits=False):
         response = {
@@ -139,8 +116,8 @@ class Local_llm:
                 pad_token_id=self.tokenizer.pad_token_id,
                 eos_token_id=self.tokenizer.eos_token_id,
                 return_full_text=False,
-                # top_p=1,
-                # do_sample=True
+                top_p=1,
+                do_sample=True
             )
             generate_text = sequences[0]["generated_text"]
             if stop:
@@ -187,22 +164,16 @@ def get_base_query(base_query: str, start_info: str, exp: List[str]) -> str:
 
 def generate_analysis_query(scenario: str, exp: List[str], few_shot_examples: str) -> str:
     query: str = f"""{few_shot_examples}"""
-
-    # if len(exp) > 0:
-    #     query += '\n\nAnalysis from past attempts:\n'
-    #     for i, m in enumerate(exp):
-    #         query += f'Trial #{i}: {m}\n'
-
     query += f"\n# Current Task\n### Trajectory{scenario}\n##Your analysis of the current trajectory\n"
+    
     return query
 
 
 def format_text(text:str) -> str:
     start_pos = text.find(':')
-    if start_pos == -1:
-        start_pos = 0
-    else:
-        start_pos += 1
+    if start_pos > 4:
+        start_pos = -1
+    start_pos += 1
 
     last_bracket_pos = text.find(']', start_pos)
     if last_bracket_pos != -1:
@@ -304,8 +275,6 @@ def gen_thought_parse(env_history, llm, exp: List, error_type=''):
     for _ in range(max_attempts):
         response = llm._generate(analyze_query, max_new_tokens=500, gen_logits=True)
         analysis = response['text'].lstrip(' ')
-        # print('***********Analysis Query***********\n' + analyze_query)
-        # print('************************************\n')
         print('**************Analysis**************\n' + analysis)
         print('************************************\n')
         sys.stdout.flush()
@@ -335,11 +304,8 @@ def gen_thought_parse(env_history, llm, exp: List, error_type=''):
                 if sents[-1].strip():
                     sents = sents[:-1]
                 e_anal = '.'.join(sents) + '.'
-                # Changed, delete experience to back to last version
-                # experience = env_history.gen_query([], True)
-                # experience = experience + 'Analysis:' + e_anal
                 
-                return earliest_e_loc, e_anal  # loc, analysis
+                return earliest_e_loc, e_anal 
 
         print(f'Attempt {_ + 1}: Failed to generate correct format.')
         sys.stdout.flush()
@@ -362,9 +328,7 @@ def rollback(idx: str, env, env_history, llm, e_loc: int, exp: List):
         _ = env.step(idx, action)
 
     new_query = env_history.gen_query(exp) + f'Action {env_history.history_len + 1}:'
-    # print('\n**************New Query**************\n' + new_query)
-    # print('*************************************\n\n')
-    # sys.stdout.flush()
+
     response = llm._generate(new_query[-(6400 - len(env_history.base_query)):], stop='\n')
     new_action = response['text'].lstrip(' ')
     new_action = format_text(new_action)
@@ -526,9 +490,5 @@ if __name__ == '__main__':
         res, roll_logs = run_episodes(BASE_PROMPT, WEBSHOP_URL, llm, assist_llm, True, args.sample_num, args.max_roll_num)
     else:
         res, roll_logs = run_episodes(BASE_PROMPT, WEBSHOP_URL, llm, n=args.sample_num, max_rollback_num=args.max_roll_num)
+    
     json.dump(roll_logs, open(args.out_record_path, 'w'), indent=4)
-    probs = {
-        'ave': prob_list,
-        'logsumexp': logsum_list
-    }
-    # json.dump(probs, open('./webshop_logs/rollback/test_qwen_th_probs.json', 'w'))

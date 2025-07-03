@@ -20,9 +20,9 @@ def extract_substring(s: str) -> str:
 
 
 def llm(prompt, stop=["\n"]):
-    client = OpenAI(api_key="", base_url="https://api.deepseek.com")
+    client = OpenAI(api_key="", base_url="")
     response = client.chat.completions.create(
-        model="deepseek-reasoner",
+        model="",
         messages=[
             {"role": "system", "content": "You are a helpful assistant"},
             {"role": "user", "content": prompt},
@@ -35,16 +35,6 @@ def llm(prompt, stop=["\n"]):
         frequency_penalty=0.0,
         presence_penalty=0.0,
     )
-    # response = openai.Completion.create(
-    #   model="text-davinci-002",
-    #   prompt=prompt,
-    #   temperature=0,
-    #   max_tokens=100,
-    #   top_p=1,
-    #   frequency_penalty=0.0,
-    #   presence_penalty=0.0,
-    #   stop=stop
-    # )
     action = response.choices[0].message.content
     action = extract_substring(generate_text)
     if len(action) > 1:

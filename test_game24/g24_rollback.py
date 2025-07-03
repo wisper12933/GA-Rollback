@@ -20,7 +20,7 @@ REACT_FILE = 'game24_base_react.txt'
 with open("../prompts/game24/game24_analyze_examples.txt", 'r') as f:
     ANALYZE_EXAMPLE = f.read()
 
-prob_threshold = 0.80
+prob_threshold = 0.93
 
 
 class Local_llm:
@@ -169,8 +169,6 @@ def gen_thought_parse(env_history, llm, exp: List):
     for _ in range(max_attempts):
         response = llm._generate(analyze_query, max_new_tokens=500, gen_logits=True)
         analysis = response['text'].lstrip(' ')
-        # print('**************Analysis Query**************\n' + analyze_query)
-        # print('******************************************')
         print('**************Analysis**************\n' + analysis)
         print('************************************')
         sys.stdout.flush()
@@ -204,7 +202,7 @@ def gen_thought_parse(env_history, llm, exp: List):
                 experience = env_history.gen_query([], True)
                 experience = experience + 'Analysis:' + e_anal
                 
-                return earliest_e_loc, experience  # loc, analysis
+                return earliest_e_loc, experience
 
         print(f'Attempt {_ + 1}: Failed to generate correct format.')
         sys.stdout.flush()
@@ -226,9 +224,7 @@ def rollback(env, env_history, llm, e_loc: int, exp: List):
         _ = env.step(action)
 
     new_query = env_history.gen_query(exp) + f'Act {env_history.history_len + 1}>'
-    # print('\n**************New Query**************\n' + new_query)
-    # print('*************************************\n\n')
-    # sys.stdout.flush()
+
     response = llm._generate(new_query, stop='\n')
     new_action = response['text'].lstrip(' ')
     new_action = format_text(new_action)

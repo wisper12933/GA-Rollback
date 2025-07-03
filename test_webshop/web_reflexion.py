@@ -21,7 +21,8 @@ ACTION_TO_TEMPLATE = {
     'Attributes': 'attributes_page.html',
 }
 
-with open("../prompts/webshop/webshop_reflexion_react_prompt.txt", 'r') as f:
+# change actionly to react to run Reflexion+ReAct
+with open("../prompts/webshop/webshop_reflexion_actionly_prompt.txt", 'r') as f:
     BASE_PROMPT = f.read()
 
 with open("../prompts/webshop/webshop_reflexion_examples.txt", 'r') as f:
@@ -118,7 +119,7 @@ def extract_substring(s: str) -> str:
     start_pos = s.find(':')
     if start_pos > 4:
         start_pos = -1
-    end_pos = s.find(']', start_pos)
+    end_pos = s.find(']', 1)
     if end_pos != -1:
         return s[start_pos + 1: end_pos + 1].strip()
     else:

@@ -11,7 +11,7 @@ Code for paper [Generator-Assistant Stepwise Rollback Framework for Large Langua
 You can install the required packages by running the following command:
 
 ```shell
-conda create -n rollback python=3.9
+conda create -n rollback python==3.9
 conda activate rollback
 pip install -r requirements.txt
 ```

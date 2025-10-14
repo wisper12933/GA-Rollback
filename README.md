@@ -1,8 +1,10 @@
 # Generator-Assistant Stepwise Rollback Framework for Large Language Model Agent
 
-![image not found](images/methodology.jpg)
+Code for EMNLP2025 MainConference [Generator-Assistant Stepwise Rollback Framework for Large Language Model Agent](https://arxiv.org/abs/2503.02519)
 
-Code for paper [Generator-Assistant Stepwise Rollback Framework for Large Language Model Agent](https://arxiv.org/abs/2503.02519)
+![image not found](images/methodology.png)
+
+LLM-based agents typically adopt a step-by-step reasoning framework, in which they interleave the processes of thinking and acting to accomplish the given task. However, this paradigm faces a deep-rooted _one-pass_ issue whereby each generated intermediate thought is plugged into the trajectory regardless of its correctness, which can cause irreversible error propagation. To address the issue, this paper proposes a novel framework called **G**enerator-**A**ssistant Stepwise **Rollback** (**GA-Rollback**) to induce better decision-making for LLM agents. Particularly, GA-Rollback utilizes a generator to interact with the environment and an assistant to examine each action produced by the generator, where the assistant triggers a rollback operation upon detection of incorrect actions. Moreover, we introduce two additional strategies tailored for the rollback scenario to further improve its effectiveness.
 
 ## ⚙️ Setup
 
